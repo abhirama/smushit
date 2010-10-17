@@ -18,9 +18,7 @@ import org.apache.http.entity.mime.content.FileBody;
 
 import java.io.IOException;
 import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import flexjson.JSONDeserializer;
 
@@ -55,6 +53,8 @@ public class SmushIt {
 
     List<SmushItResultVo> smushItResultVos = this.transformToResultVo(responseBody);
 
+    httpClient.getConnectionManager().shutdown();
+
     return smushItResultVos;
   }
 
@@ -82,12 +82,25 @@ public class SmushIt {
   }
 
   public static void main(String[] args) throws IOException {
+    Set<String> validFiles = new HashSet<String>();
+    validFiles.add("gif");
+    validFiles.add("png");
+    validFiles.add("jpg");
+    validFiles.add("jpeg");
+
+    FileTraverser fileTraverser = new FileTraverser("D:\\projects\\burrp\\tv\\Production1.1.12\\web\\images", validFiles);
+    List<String> images = fileTraverser.getFiles();
+
     SmushIt smushIt = new SmushIt();
 /*    smushIt.addFile("D:\\projects\\personal\\30x30.PNG");
     smushIt.addFile("D:\\projects\\personal\\30x30.PNG");*/
-    smushIt.addFile("D:\\projects\\burrp\\tv\\Production1.1.12\\web\\images\\dancing_banana.gif");
+    //smushIt.addFile("D:\\projects\\burrp\\tv\\Production1.1.12\\web\\images\\dancing_banana.gif");
+    smushIt.addFiles(images);
 
     List<SmushItResultVo> smushItResultVos = smushIt.smush();
-    System.out.println(smushItResultVos);
+
+    SmushStats smushStats = new SmushStats(smushItResultVos);
+    SmushStatsVo smushStatsVo = smushStats.getSmushStats();
+    System.out.println(smushStatsVo);
   }
 }
