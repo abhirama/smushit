@@ -74,9 +74,9 @@ public class SmushItResultVo {
   }
 
   public String toString() {
-    String str = "source image=" + this.sourceImage + ", source image size=" + this.sourceImageSize
+    String str = "{source image=" + this.sourceImage + ", source image size=" + this.sourceImageSize
         + ", smushed images url=" + this.smushedImageUrl + ", smushed image size=" + this.smushedImageSize
-        + ", percentage saving=" + this.savingPercentage;
+        + ", percentage saving=" + this.savingPercentage + "}";
 
     return str;
   }
