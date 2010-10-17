@@ -59,13 +59,17 @@ public class SmushIt {
   }
 
   protected List<SmushItResultVo> transformToResultVo(String jsonResponse) {
-    System.out.println(jsonResponse);
-    List<Map> result = new JSONDeserializer<List<Map>>().deserialize(jsonResponse);
-
     List<SmushItResultVo> smushItResultVos = new LinkedList<SmushItResultVo>();
 
-    for (Map map : result) {
-      smushItResultVos.add(SmushItResultVo.create(map));
+    if (this.files.size() > 1) {
+      List<Map> result = new JSONDeserializer<List<Map>>().deserialize(jsonResponse);
+
+      for (Map map : result) {
+        smushItResultVos.add(SmushItResultVo.create(map));
+      }
+    } else {
+      Map result = new JSONDeserializer<Map>().deserialize(jsonResponse);
+      smushItResultVos.add(SmushItResultVo.create(result));
     }
 
     return smushItResultVos;
@@ -79,6 +83,7 @@ public class SmushIt {
 
   public static void main(String[] args) throws IOException {
     SmushIt smushIt = new SmushIt();
+    smushIt.addFile("D:\\projects\\personal\\30x30.PNG");
     smushIt.addFile("D:\\projects\\personal\\30x30.PNG");
     List<SmushItResultVo> smushItResultVos = smushIt.smush();
     System.out.println(smushItResultVos);
