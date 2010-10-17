@@ -8,11 +8,10 @@
 package com.abhyrama.smushit;
 
 import java.io.File;
-import java.io.FileFilter;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 
 public class FileTraverser {
   protected final String rootDirectory;
