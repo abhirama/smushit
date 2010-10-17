@@ -19,20 +19,31 @@ import org.apache.http.entity.mime.content.FileBody;
 
 import java.io.IOException;
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class SmushIt {
   public static final String FILE_PARAM_NAME = "files[]";
   public static final String SMUSHIT_URL = "http://www.smushit.com/ysmush.it/ws.php";
 
-  public static void main(String[] args) throws IOException {
+  protected List<String> files = new LinkedList<String>();
+
+  public void addFile(String file) {
+    this.files.add(file);
+  }
+
+  public void addFiles(List<String> files) {
+    this.files.addAll(files);
+  }
+
+  public void smush() throws IOException {
     HttpClient httpClient = new DefaultHttpClient();
 
     HttpPost httpPost = new HttpPost(SMUSHIT_URL);
 
     MultipartEntity multipartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-
-    multipartEntity.addPart(FILE_PARAM_NAME, new FileBody(new File("D:\\projects\\personal\\30x30.PNG")));
+    this.addFilesToRequest(multipartEntity);
 
     httpPost.setEntity(multipartEntity);
 
@@ -41,5 +52,17 @@ public class SmushIt {
     String responseBody = httpClient.execute(httpPost, responseHandler);
 
     System.out.println(responseBody);
+  }
+  
+  protected void addFilesToRequest(MultipartEntity multipartEntity) {
+    for (String file : this.files) {
+      multipartEntity.addPart(FILE_PARAM_NAME, new FileBody(new File(file)));
+    }
+  }
+
+  public static void main(String[] args) throws IOException {
+    SmushIt smushIt = new SmushIt();
+    smushIt.addFile("D:\\projects\\personal\\30x30.PNG");
+    smushIt.smush();
   }
 }
