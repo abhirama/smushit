@@ -22,14 +22,17 @@ import java.io.File;
 
 
 public class SmushIt {
+  public static final String FILE_PARAM_NAME = "files[]";
+  public static final String SMUSHIT_URL = "http://www.smushit.com/ysmush.it/ws.php";
+
   public static void main(String[] args) throws IOException {
     HttpClient httpClient = new DefaultHttpClient();
 
-    HttpPost httpPost = new HttpPost("http://www.smushit.com/ysmush.it/ws.php");
+    HttpPost httpPost = new HttpPost(SMUSHIT_URL);
 
     MultipartEntity multipartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-    multipartEntity.addPart("files[]", new FileBody(new File("D:\\projects\\personal\\30x30.PNG")));
+    multipartEntity.addPart(FILE_PARAM_NAME, new FileBody(new File("D:\\projects\\personal\\30x30.PNG")));
 
     httpPost.setEntity(multipartEntity);
 
