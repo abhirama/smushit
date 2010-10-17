@@ -83,8 +83,10 @@ public class SmushIt {
 
   public static void main(String[] args) throws IOException {
     SmushIt smushIt = new SmushIt();
-    smushIt.addFile("D:\\projects\\personal\\30x30.PNG");
-    smushIt.addFile("D:\\projects\\personal\\30x30.PNG");
+/*    smushIt.addFile("D:\\projects\\personal\\30x30.PNG");
+    smushIt.addFile("D:\\projects\\personal\\30x30.PNG");*/
+    smushIt.addFile("D:\\projects\\burrp\\tv\\Production1.1.12\\web\\images\\dancing_banana.gif");
+
     List<SmushItResultVo> smushItResultVos = smushIt.smush();
     System.out.println(smushItResultVos);
   }
