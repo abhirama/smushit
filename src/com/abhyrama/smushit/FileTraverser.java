@@ -15,6 +15,7 @@ import java.util.Set;
 
 public class FileTraverser {
   protected final String rootDirectory;
+  //this has to be in lower case
   protected final Set<String> validFileExtensions;
 
   protected final boolean isFileExtensionListSupplied;
@@ -63,7 +64,7 @@ public class FileTraverser {
   protected String getExtension(File file) {
     String filename = file.toString();
     String ext = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
-    return ext;
+    return ext.toLowerCase();
   }
 
   public static void main(String[] args) {
