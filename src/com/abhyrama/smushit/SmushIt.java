@@ -9,7 +9,6 @@ package com.abhyrama.smushit;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.BasicResponseHandler;
@@ -21,6 +20,9 @@ import java.io.IOException;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import flexjson.JSONDeserializer;
 
 
 public class SmushIt {
@@ -37,7 +39,7 @@ public class SmushIt {
     this.files.addAll(files);
   }
 
-  public void smush() throws IOException {
+  public List<SmushItResultVo> smush() throws IOException {
     HttpClient httpClient = new DefaultHttpClient();
 
     HttpPost httpPost = new HttpPost(SMUSHIT_URL);
@@ -51,7 +53,22 @@ public class SmushIt {
 
     String responseBody = httpClient.execute(httpPost, responseHandler);
 
-    System.out.println(responseBody);
+    List<SmushItResultVo> smushItResultVos = this.transformToResultVo(responseBody);
+
+    return smushItResultVos;
+  }
+
+  protected List<SmushItResultVo> transformToResultVo(String jsonResponse) {
+    System.out.println(jsonResponse);
+    List<Map> result = new JSONDeserializer<List<Map>>().deserialize(jsonResponse);
+
+    List<SmushItResultVo> smushItResultVos = new LinkedList<SmushItResultVo>();
+
+    for (Map map : result) {
+      smushItResultVos.add(SmushItResultVo.create(map));
+    }
+
+    return smushItResultVos;
   }
   
   protected void addFilesToRequest(MultipartEntity multipartEntity) {
@@ -63,6 +80,7 @@ public class SmushIt {
   public static void main(String[] args) throws IOException {
     SmushIt smushIt = new SmushIt();
     smushIt.addFile("D:\\projects\\personal\\30x30.PNG");
-    smushIt.smush();
+    List<SmushItResultVo> smushItResultVos = smushIt.smush();
+    System.out.println(smushItResultVos);
   }
 }
