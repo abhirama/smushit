@@ -26,10 +26,11 @@ import flexjson.JSONDeserializer;
 public class SmushIt {
   public static final String FILE_PARAM_NAME = "files[]";
   public static final String SMUSHIT_URL = "http://www.smushit.com/ysmush.it/ws.php";
-  public static final int MAX_FILE_SIZE = 1000000; //corresponds to 1mb
+  public static final int MAX_FILE_SIZE = 1000000; //corresponds to 1mb as smushit cannot smush images of size greater than 1 mb
   public static final String SMUSHIT_RESPONSE_ARRAY_START = "[";
   public static final String SMUSHIT_RESPONSE_ARRAY_END = "]";
 
+  //we need the batch size as a huge image upload results in chunked response which the http library cannot handle well
   public static int SMUSH_BATCH_SIZE = 10;
 
   protected List<String> files = new LinkedList<String>();
