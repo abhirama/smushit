@@ -129,7 +129,7 @@ public class SmushIt {
     validFiles.add("jpg");
     validFiles.add("jpeg");
 
-    FileTraverser fileTraverser = new FileTraverser("D:\\projects\\burrp\\tv\\Production1.1.12\\web\\images\\icons", validFiles, MAX_FILE_SIZE);
+    FileTraverser fileTraverser = new FileTraverser("D:\\projects\\burrp\\tv\\Production1.1.12\\web\\images\\icons", new MyFileFilter(validFiles, SmushIt.MAX_FILE_SIZE));
     List<String> images = fileTraverser.getFiles();
 
     //images = images.subList(0, 1);
