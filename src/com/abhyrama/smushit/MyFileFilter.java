@@ -27,7 +27,7 @@ public class MyFileFilter implements java.io.FileFilter {
   }
 
   public boolean accept(File file) {
-    return this.isAcceptedFileExtension(file) && this.isWithinFileSize(file);
+    return !file.isDirectory() && this.isAcceptedFileExtension(file) && this.isWithinFileSize(file);
   }
 
   protected boolean isAcceptedFileExtension(File file) {
@@ -40,7 +40,6 @@ public class MyFileFilter implements java.io.FileFilter {
   }
 
   protected boolean isWithinFileSize(File file) {
-    System.out.println(file.length());
     return file.length() <= this.maximumFileSize;
   }
 }
