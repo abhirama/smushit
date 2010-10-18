@@ -47,7 +47,7 @@ public class SmushStatsVo {
 
   public String toString() {
     return "Total images uploaded=" + this.totalUploadedImagesCount + ", Total smushed images=" + this.smushedImagesCount
-        + ", Total uploaded images size=" + this.totalUploadedImagesSize + ", Total smushed image size" + this.totalSmushedImagesSize;
+        + ", Total uploaded images size=" + this.totalUploadedImagesSize + ", Total smushed image size=" + this.totalSmushedImagesSize;
   }
 
 }
