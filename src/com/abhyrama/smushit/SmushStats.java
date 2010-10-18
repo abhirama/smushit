@@ -25,7 +25,7 @@ public class SmushStats {
       int originalImageSize = Integer.parseInt(smushItResultVo.getSourceImageSize());
       totalImageSize = totalImageSize + originalImageSize;
 
-      if (!smushItResultVo.getSmushedImageUrl().equals("null")) {
+      if (smushItResultVo.getSmushedImageUrl() != null) {
         noOfConvertedFiles = noOfConvertedFiles + 1;
         convertedImageSize = convertedImageSize + Integer.parseInt(smushItResultVo.getSmushedImageSize());
       } else {

@@ -66,7 +66,14 @@ public class SmushItResultVo {
     SmushItResultVo smushItResultVo = new SmushItResultVo();
     smushItResultVo.setSourceImage((String.valueOf(map.get(JSON_RESPONSE_PARAM_SRC))));
     smushItResultVo.setSourceImageSize((String.valueOf(map.get(JSON_RESPONSE_PARAM_SRC_SIZE))));
-    smushItResultVo.setSmushedImageUrl((String.valueOf(map.get(JSON_RESPONSE_PARAM_DEST))));
+
+    String smushedImageUrl = String.valueOf(map.get(JSON_RESPONSE_PARAM_DEST));
+    if ("null".equals(smushedImageUrl)) {
+      smushItResultVo.setSmushedImageUrl(null);
+    } else {
+      smushItResultVo.setSmushedImageUrl(smushedImageUrl);
+    }
+
     smushItResultVo.setSmushedImageSize((String.valueOf(map.get(JSON_RESPONSE_PARAM_DEST_SIZE))));
     smushItResultVo.setSavingPercentage((String.valueOf(map.get(JSON_RESPONSE_PARAM_PERCENT))));
 
