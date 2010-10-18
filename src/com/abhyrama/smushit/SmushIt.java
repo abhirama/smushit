@@ -57,7 +57,6 @@ public class SmushIt {
     } else {
       subList = this.files.subList(startIndex, endIndex);
 
-      System.out.println("start:" + startIndex + ", end:" + endIndex);
 
       while (subList.size() != 0) {
         smushItResultVos.addAll(this.smushHelper(subList));
@@ -88,7 +87,6 @@ public class SmushIt {
     ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
     String responseBody = httpClient.execute(httpPost, responseHandler);
-    System.out.println(responseBody);
 
     List<SmushItResultVo> smushItResultVos = this.transformToResultVo(responseBody);
 
@@ -119,7 +117,6 @@ public class SmushIt {
 
   protected void addFilesToRequest(MultipartEntity multipartEntity, List<String> files) {
     for (String file : files) {
-      System.out.println(file);
       multipartEntity.addPart(FILE_PARAM_NAME, new FileBody(new File(file)));
     }
   }
@@ -131,14 +128,14 @@ public class SmushIt {
     validFiles.add("jpg");
     validFiles.add("jpeg");
 
-    FileTraverser fileTraverser = new FileTraverser("D:\\projects\\burrp\\local\\mobile-api-branch\\web\\images", validFiles, MAX_FILE_SIZE);
+    FileTraverser fileTraverser = new FileTraverser("D:\\projects\\burrp\\tv\\Production1.1.12\\web\\images\\icons", validFiles, MAX_FILE_SIZE);
     List<String> images = fileTraverser.getFiles();
 
     //images = images.subList(0, 1);
 
     SmushIt smushIt = new SmushIt();
-/*    smushIt.addFile("D:\\projects\\personal\\30x30.PNG");
-    smushIt.addFile("D:\\projects\\personal\\30x30.PNG");*/
+    //smushIt.addFile("D:\\projects\\personal\\30x30.PNG");
+    //smushIt.addFile("D:\\projects\\personal\\30x30.PNG");
     //smushIt.addFile("D:\\projects\\burrp\\tv\\Production1.1.12\\web\\images\\dancing_banana.gif");
     smushIt.addFiles(images);
 
@@ -146,6 +143,19 @@ public class SmushIt {
 
     SmushStats smushStats = new SmushStats(smushItResultVos);
     SmushStatsVo smushStatsVo = smushStats.getSmushStats();
+
+    ImageDownloader imageDownloader = new ImageDownloader("D:\\foo");
+
+    for (Iterator<SmushItResultVo> iter = smushItResultVos.iterator(); iter.hasNext();) {
+      SmushItResultVo smushItResultVo = iter.next();
+
+      if (smushItResultVo.getSmushedImageUrl() == null) {
+        iter.remove();
+      }
+    }
+
+    imageDownloader.download(smushItResultVos);
+
     System.out.println(smushStatsVo);
   }
 }
