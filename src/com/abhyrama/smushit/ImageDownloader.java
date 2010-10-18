@@ -29,6 +29,8 @@ public class ImageDownloader {
     String imageName = Utils.getImageNameFromUrl(stringUrl);
 
     File outfile = new File(this.downloadDirectory + File.separator + imageName);
+    //here we are assuming there is an image writer for the corresponding image extenion/type. Do not know how it will
+    //behave if passed an image type for which there is no writer. todo check this
     ImageIO.write(image, imageExtension, outfile);
 
     return outfile;
