@@ -60,7 +60,7 @@ public class FileTraverser {
 
   protected boolean isAcceptedFileExtension(File file) {
     if (this.isFileExtensionListSupplied) {
-      return this.validFileExtensions.contains(this.getExtension(file));
+      return this.validFileExtensions.contains(Utils.getExtension(file.toString()));
     }
 
     //if the extension while list is not defined it means all files have to be listed
@@ -69,12 +69,6 @@ public class FileTraverser {
 
   protected boolean isWithinFileSize(File file) {
     return file.length() <= this.maximumFileSize;
-  }
-
-  protected String getExtension(File file) {
-    String filename = file.toString();
-    String ext = filename.substring(filename.lastIndexOf(".") + 1, filename.length());
-    return ext.toLowerCase();
   }
 
   public static void main(String[] args) {
