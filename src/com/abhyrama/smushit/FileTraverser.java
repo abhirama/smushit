@@ -19,13 +19,15 @@ public class FileTraverser {
   protected final Set<String> validFileExtensions;
 
   protected final boolean isFileExtensionListSupplied;
+  protected final int maximumFileSize;
 
   protected List<String> files = new LinkedList<String>();
 
-  public FileTraverser(String rootDirectory, Set<String> validFileExtension) {
+  public FileTraverser(String rootDirectory, Set<String> validFileExtension, int maximumFileSize) {
     this.rootDirectory = rootDirectory;
     //if this is empty we assume all files are valid
     this.validFileExtensions = validFileExtension;
+    this.maximumFileSize = maximumFileSize;
 
     if (this.validFileExtensions != null && this.validFileExtensions.size() > 0) {
       this.isFileExtensionListSupplied = true;
@@ -53,12 +55,20 @@ public class FileTraverser {
   }
 
   protected boolean isAcceptedFile(File file) {
+    return this.isAcceptedFileExtension(file) && this.isWithinFileSize(file);
+  }
+
+  protected boolean isAcceptedFileExtension(File file) {
     if (this.isFileExtensionListSupplied) {
       return this.validFileExtensions.contains(this.getExtension(file));
     }
 
     //if the extension while list is not defined it means all files have to be listed
     return true;
+  }
+
+  protected boolean isWithinFileSize(File file) {
+    return file.length() <= this.maximumFileSize;
   }
 
   protected String getExtension(File file) {
@@ -69,8 +79,9 @@ public class FileTraverser {
 
   public static void main(String[] args) {
     Set<String> validFiles = new HashSet<String>();
-    validFiles.add("java");
-    FileTraverser fileTraverser = new FileTraverser("D:\\projects\\personal\\smushit", validFiles);
+    validFiles.add("jpg");
+    validFiles.add("jpeg");
+    FileTraverser fileTraverser = new FileTraverser("D:\\projects\\burrp\\local\\mobile-api-branch\\web\\images\\nye\\download", validFiles, 1000000);
     System.out.println(fileTraverser.getFiles());
   }
 }
