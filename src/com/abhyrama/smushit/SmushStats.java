@@ -18,16 +18,16 @@ public class SmushStats {
 
   public SmushStatsVo getSmushStats() {
     int noOfConvertedFiles = 0;
-    float totalImageSize = 0;
-    float convertedImageSize = 0;
+    int totalImageSize = 0;
+    int convertedImageSize = 0;
 
     for (SmushItResultVo smushItResultVo : this.smushItResultVos) {
-      float originalImageSize = Float.parseFloat(smushItResultVo.getSourceImageSize());
+      int originalImageSize = Integer.parseInt(smushItResultVo.getSourceImageSize());
       totalImageSize = totalImageSize + originalImageSize;
 
       if (!smushItResultVo.getSmushedImageUrl().equals("null")) {
         noOfConvertedFiles = noOfConvertedFiles + 1;
-        convertedImageSize = convertedImageSize + Float.parseFloat(smushItResultVo.getSmushedImageSize());
+        convertedImageSize = convertedImageSize + Integer.parseInt(smushItResultVo.getSmushedImageSize());
       } else {
         convertedImageSize = convertedImageSize + originalImageSize; 
       }
