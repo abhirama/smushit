@@ -78,6 +78,7 @@ public class SmushImages {
   public static final String VERBOSE_COMMAND_LINE_OPTION = "verbose";
   public static final String VERBOSE_COMMAND_LINE_OPTION_TRUE = "true";
   public static final String VERBOSE_COMMAND_LINE_OPTION_FALSE = "flase";
+  public static final String IMAGE_EXTENSION_COMMAND_LINE_OPTION = "imgExtensions";
 
   public static void main(String[] args) throws IOException {
     if (args.length == 0) {
@@ -88,36 +89,46 @@ public class SmushImages {
     Map<String, String> options = processCommandLineArguments(args);
 
     if (!(options.containsKey(IMAGE_DIR_COMMAND_LINE_OPTION))) {
-      System.out.println("\nError:Please specify the directory containing the images to be smushed");
-      printUsageInstructions();
-      System.exit(0);
+      displayErrorAndExit("\nError:Please specify the directory containing the images to be smushed");
     }
 
     if (options.containsKey(VERBOSE_COMMAND_LINE_OPTION)) {
       String verboseOptionValue = options.get(VERBOSE_COMMAND_LINE_OPTION);
 
       if (!(VERBOSE_COMMAND_LINE_OPTION_TRUE.equals(verboseOptionValue) || VERBOSE_COMMAND_LINE_OPTION_FALSE.equals(verboseOptionValue))) {
-        System.out.println("\nError:Verbose option value should be either true or false");
-        printUsageInstructions();
-        System.exit(0);
+        displayErrorAndExit("\nError:Verbose option value should be either true or false");
       }
     }
 
     String rootDirectory = options.get(IMAGE_DIR_COMMAND_LINE_OPTION);
     if (!(new File(rootDirectory).exists())) {
-      System.out.println("\nError:Specified directory does not exist");
-      printUsageInstructions();
-      System.exit(0);
+      displayErrorAndExit("\nError:Specified directory does not exist");
     }
 
+    String passedImageExtensions = options.get(IMAGE_EXTENSION_COMMAND_LINE_OPTION);
     Set<String> validFiles = new HashSet<String>();
-    validFiles.add("gif");
-    validFiles.add("png");
-    validFiles.add("jpg");
-    validFiles.add("jpeg");
+    if (passedImageExtensions != null && !passedImageExtensions.equals("")) {
+      validFiles = getPassedImageExtensions(passedImageExtensions);
+    } else {
+      validFiles.add("gif");
+      validFiles.add("png");
+      validFiles.add("jpg");
+      validFiles.add("jpeg");
+    }
 
     SmushImages smushImages = new SmushImages(options.get(IMAGE_DIR_COMMAND_LINE_OPTION), validFiles);
     smushImages.smush();
+  }
+
+  protected static Set<String> getPassedImageExtensions(String arg) {
+    String[] imageExtensions = arg.split(",");
+    Set<String> passedImageExtensions = new HashSet<String>(imageExtensions.length);
+
+    for (String imageExtension : imageExtensions) {
+      passedImageExtensions.add(imageExtension.trim());
+    }
+
+    return passedImageExtensions;
   }
 
   private static class CommandOptionVo {
@@ -129,6 +140,7 @@ public class SmushImages {
     Set<String> acceptedCommandLineOptions = new HashSet<String>();
     acceptedCommandLineOptions.add(IMAGE_DIR_COMMAND_LINE_OPTION);
     acceptedCommandLineOptions.add(VERBOSE_COMMAND_LINE_OPTION);
+    acceptedCommandLineOptions.add(IMAGE_EXTENSION_COMMAND_LINE_OPTION);
 
     Map<String, String> options = new HashMap<String, String>(args.length);
 
@@ -136,10 +148,18 @@ public class SmushImages {
       CommandOptionVo commandOptionVo = convertToCommandOptionVo(arg);
       if (acceptedCommandLineOptions.contains(commandOptionVo.option)) {
         options.put(commandOptionVo.option, commandOptionVo.value);
+      } else {
+        displayErrorAndExit("\nError:You passed an option which the program does not recognize");
       }
     }
 
     return options;
+  }
+
+  protected static void displayErrorAndExit(String errorMessage) {
+    System.out.println(errorMessage);
+    printUsageInstructions();
+    System.exit(0);
   }
 
   protected static void printUsageInstructions() {
@@ -147,11 +167,15 @@ public class SmushImages {
         "\n\n" +
         "Compulsory Option" +
         "\n" +
-        " -imageDir                      Directory of the images to be smushed" +
+        " -imageDir                       Directory of the images to be smushed" +
         "\n\n" +
         "Optional Option" +
         "\n" +
-        " -verbose <true|false>          Display informational messages";
+        " -verbose <true|false>           Display informational messages\n" +
+        " -imgExtensions                  Comma separated image extension. If none provided assumes png, gif, jpg/jpeg" +
+        "\n\nExample usage: " +
+        "\njava -jar smushit.jar -imageDir=/foo -verbose=true -imgExtensions=gif,png,jpeg";
+
     System.out.println(usage);
   }
 
@@ -166,6 +190,8 @@ public class SmushImages {
       commandOptionVo = new CommandOptionVo();
       commandOptionVo.option = matcher.group(1);
       commandOptionVo.value = matcher.group(2);
+    } else {
+      displayErrorAndExit("\nError:The way you specified options is not correct");
     }
 
     return commandOptionVo;
