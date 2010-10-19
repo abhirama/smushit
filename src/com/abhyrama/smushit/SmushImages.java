@@ -18,14 +18,16 @@ public class SmushImages {
   protected final String rootDirectory;
   protected final Set<String> acceptedFileExtensions;
   protected boolean verbose;
+  protected FileFilter imageFileFilter;
+  protected FileFilter directoryFilter;
+  protected boolean dryRun;
+
+  protected List<SmushItResultVo> smushItResultVos = new LinkedList<SmushItResultVo>();
 
   public SmushImages(String rootDirectory, Set<String> acceptedFileExtensions) {
     this.rootDirectory = rootDirectory;
     this.acceptedFileExtensions = acceptedFileExtensions;
   }
-
-  protected FileFilter imageFileFilter;
-  protected FileFilter directoryFilter;
 
   public FileFilter getImageFileFilter() {
     return imageFileFilter;
@@ -43,7 +45,6 @@ public class SmushImages {
     this.directoryFilter = directoryFilter;
   }
 
-
   public boolean isVerbose() {
     return verbose;
   }
@@ -52,8 +53,17 @@ public class SmushImages {
     this.verbose = verbose;
   }
 
-  public void smush() throws IOException {
+  public List<SmushItResultVo> smush() throws IOException {
     this.smushHelper(new File(this.rootDirectory));
+    return this.smushItResultVos;
+  }
+
+  public boolean isDryRun() {
+    return dryRun;
+  }
+
+  public void setDryRun(boolean dryRun) {
+    this.dryRun = dryRun;
   }
 
   protected void smushHelper(File directory) throws IOException {
@@ -70,7 +80,11 @@ public class SmushImages {
       smushIt.addFiles(this.arrayToList(images));
       List<SmushItResultVo> smushItResultVos = smushIt.smush();
 
-      this.replaceWithSmushedImages(directory, smushItResultVos);
+      this.smushItResultVos.addAll(smushItResultVos);
+
+      if (!this.dryRun) {
+        this.replaceWithSmushedImages(directory, smushItResultVos);
+      }
     }
 
     File[] directories = directory.listFiles(this.directoryFilter);
@@ -110,9 +124,11 @@ public class SmushImages {
 
   public static final String IMAGE_DIR_COMMAND_LINE_OPTION = "imageDir";
   public static final String VERBOSE_COMMAND_LINE_OPTION = "verbose";
-  public static final String VERBOSE_COMMAND_LINE_OPTION_TRUE = "true";
-  public static final String VERBOSE_COMMAND_LINE_OPTION_FALSE = "flase";
+  public static final String DRY_RUN_COMMAND_LINE_OPTION = "dryRun";
   public static final String IMAGE_EXTENSION_COMMAND_LINE_OPTION = "imgExtensions";
+
+  public static final String COMMAND_LINE_OPTION_TRUE = "true";
+  public static final String COMMAND_LINE_OPTION_FALSE = "false";
 
   public static void main(String[] args) throws IOException {
     if (args.length == 0) {
@@ -130,11 +146,22 @@ public class SmushImages {
     if (options.containsKey(VERBOSE_COMMAND_LINE_OPTION)) {
       String verboseOptionValue = options.get(VERBOSE_COMMAND_LINE_OPTION);
 
-      if (!(VERBOSE_COMMAND_LINE_OPTION_TRUE.equals(verboseOptionValue) || VERBOSE_COMMAND_LINE_OPTION_FALSE.equals(verboseOptionValue))) {
+      if (!(COMMAND_LINE_OPTION_TRUE.equals(verboseOptionValue) || COMMAND_LINE_OPTION_FALSE.equals(verboseOptionValue))) {
         displayErrorAndExit("\nError:Verbose option value should be either true or false");
       }
 
       verbose = Boolean.valueOf(verboseOptionValue);
+    }
+
+    boolean dryRun = false;
+    if (options.containsKey(DRY_RUN_COMMAND_LINE_OPTION)) {
+      String dryRunOptionValue = options.get(DRY_RUN_COMMAND_LINE_OPTION);
+
+      if (!(COMMAND_LINE_OPTION_TRUE.equals(dryRunOptionValue) || COMMAND_LINE_OPTION_FALSE.equals(dryRunOptionValue))) {
+        displayErrorAndExit("\nError:Dry run option value should be either true or false");
+      }
+
+      dryRun = Boolean.valueOf(dryRunOptionValue);
     }
 
     String rootDirectory = options.get(IMAGE_DIR_COMMAND_LINE_OPTION);
@@ -155,9 +182,21 @@ public class SmushImages {
 
     SmushImages smushImages = new SmushImages(options.get(IMAGE_DIR_COMMAND_LINE_OPTION), validFiles);
     smushImages.setVerbose(verbose);
+    smushImages.setDryRun(dryRun);
     smushImages.setImageFileFilter(new MyFileFilter(validFiles, SmushIt.MAX_FILE_SIZE));
     smushImages.setDirectoryFilter(new DirectoryFilter());
-    smushImages.smush();
+    List<SmushItResultVo> smushItResultVos = smushImages.smush();
+
+    SmushStats smushStats = new SmushStats(smushItResultVos);
+    SmushStatsVo smushStatsVo = smushStats.getSmushStats();
+
+    System.out.println("\n-------------------------------------");
+    System.out.println("Total images uploaded - " + smushStatsVo.getTotalUploadedImagesCount());
+    System.out.println("Total images smushed - " + smushStatsVo.getSmushedImagesCount());
+    System.out.println("Total uploaded images size - " + smushStatsVo.getTotalUploadedImagesSize() + " bytes");
+    System.out.println("Total smushed image size - " + smushStatsVo.getTotalSmushedImagesSize() + " bytes");
+    System.out.println("Percentage saving - " + smushStatsVo.calculatePercentageSaving() + "%");
+    System.out.println("-------------------------------------");
   }
 
   protected static Set<String> getPassedImageExtensions(String arg) {
@@ -181,6 +220,7 @@ public class SmushImages {
     acceptedCommandLineOptions.add(IMAGE_DIR_COMMAND_LINE_OPTION);
     acceptedCommandLineOptions.add(VERBOSE_COMMAND_LINE_OPTION);
     acceptedCommandLineOptions.add(IMAGE_EXTENSION_COMMAND_LINE_OPTION);
+    acceptedCommandLineOptions.add(DRY_RUN_COMMAND_LINE_OPTION);
 
     Map<String, String> options = new HashMap<String, String>(args.length);
 
@@ -212,6 +252,7 @@ public class SmushImages {
         "Optional Option" +
         "\n" +
         " -verbose <true|false>           Display informational messages\n" +
+        " -dryRun <true|false>            Whether smushed images should be downloaded or not\n" +
         " -imgExtensions                  Comma separated image extension. If none provided assumes png, gif, jpg/jpeg" +
         "\n\nExample usage: " +
         "\njava -jar smushit.jar -imageDir=/foo -verbose=true -imgExtensions=gif,png,jpeg";
