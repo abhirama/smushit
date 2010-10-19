@@ -31,6 +31,7 @@ public class SmushIt {
   public static final String SMUSHIT_RESPONSE_ARRAY_END = "]";
 
   //we need the batch size as a huge image upload results in chunked response which the http library cannot handle well
+  //or I do not know how to handle chunked responses :)
   public static int SMUSH_BATCH_SIZE = 10;
 
   protected List<String> files = new LinkedList<String>();
@@ -99,7 +100,7 @@ public class SmushIt {
   protected List<SmushItResultVo> transformToResultVo(String jsonResponse) {
     List<SmushItResultVo> smushItResultVos = new LinkedList<SmushItResultVo>();
 
-    if (this.isResponseArray(jsonResponse)) { //means the result is an array
+    if (this.isResponseArray(jsonResponse)) {
       List<Map> result = new JSONDeserializer<List<Map>>().deserialize(jsonResponse);
       for (Map map : result) {
         smushItResultVos.add(SmushItResultVo.create(map));
@@ -120,43 +121,5 @@ public class SmushIt {
     for (String file : files) {
       multipartEntity.addPart(FILE_PARAM_NAME, new FileBody(new File(file)));
     }
-  }
-
-  public static void main(String[] args) throws IOException {
-    Set<String> validFiles = new HashSet<String>();
-    validFiles.add("gif");
-    validFiles.add("png");
-    validFiles.add("jpg");
-    validFiles.add("jpeg");
-
-    FileTraverser fileTraverser = new FileTraverser("D:\\projects\\burrp\\tv\\Production1.1.12\\web\\images\\icons", new MyFileFilter(validFiles, SmushIt.MAX_FILE_SIZE));
-    List<String> images = fileTraverser.getFiles();
-
-    //images = images.subList(0, 1);
-
-    SmushIt smushIt = new SmushIt();
-    //smushIt.addFile("D:\\projects\\personal\\30x30.PNG");
-    //smushIt.addFile("D:\\projects\\personal\\30x30.PNG");
-    //smushIt.addFile("D:\\projects\\burrp\\tv\\Production1.1.12\\web\\images\\dancing_banana.gif");
-    smushIt.addFiles(images);
-
-    List<SmushItResultVo> smushItResultVos = smushIt.smush();
-
-    SmushStats smushStats = new SmushStats(smushItResultVos);
-    SmushStatsVo smushStatsVo = smushStats.getSmushStats();
-
-    ImageDownloader imageDownloader = new ImageDownloader("D:\\foo");
-
-    for (Iterator<SmushItResultVo> iter = smushItResultVos.iterator(); iter.hasNext();) {
-      SmushItResultVo smushItResultVo = iter.next();
-
-      if (smushItResultVo.getSmushedImageUrl() == null) {
-        iter.remove();
-      }
-    }
-
-    imageDownloader.download(smushItResultVos);
-
-    System.out.println(smushStatsVo);
   }
 }
