@@ -5,6 +5,10 @@
   <property name="build.dir" value="build"/>
   <property name="java-src.dir" value="src"/>
 
+  <target name="clean" description="Clean output directories">
+    <delete dir="${build.dir}" />
+  </target>
+
   <path id="classpath">
     <fileset dir="${lib.dir}" includes="*.jar"/>
     <pathelement path="${build.dir}"/>
@@ -21,7 +25,7 @@
     </javac>
   </target>
 
-  <target name="createJar">
+  <target name="createJar" depends="compile" description="Create the application jar file">
     <jar destfile="smushit.jar">
       <zipfileset dir="${build.dir}/classes" prefix=""/>
       <zipfileset src="${lib.dir}/apache-mime4j-0.6.jar"/>
