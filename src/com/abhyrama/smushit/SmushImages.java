@@ -24,8 +24,25 @@ public class SmushImages {
     this.acceptedFileExtensions = acceptedFileExtensions;
   }
 
-  protected final FileFilter myFileFilter = new MyFileFilter(this.acceptedFileExtensions, SmushIt.MAX_FILE_SIZE);
-  protected final FileFilter directoryFilter = new DirectoryFilter();
+  protected FileFilter imageFileFilter;
+  protected FileFilter directoryFilter;
+
+  public FileFilter getImageFileFilter() {
+    return imageFileFilter;
+  }
+
+  public void setImageFileFilter(FileFilter imageFileFilter) {
+    this.imageFileFilter = imageFileFilter;
+  }
+
+  public FileFilter getDirectoryFilter() {
+    return directoryFilter;
+  }
+
+  public void setDirectoryFilter(FileFilter directoryFilter) {
+    this.directoryFilter = directoryFilter;
+  }
+
 
   public boolean isVerbose() {
     return verbose;
@@ -44,7 +61,7 @@ public class SmushImages {
       System.out.println("Smushing files in directory - " + directory.toString());
     }
 
-    File[] images = directory.listFiles(this.myFileFilter);
+    File[] images = directory.listFiles(this.imageFileFilter);
 
     if (images.length > 0) {
       SmushIt smushIt = new SmushIt();
@@ -138,6 +155,8 @@ public class SmushImages {
 
     SmushImages smushImages = new SmushImages(options.get(IMAGE_DIR_COMMAND_LINE_OPTION), validFiles);
     smushImages.setVerbose(verbose);
+    smushImages.setImageFileFilter(new MyFileFilter(validFiles, SmushIt.MAX_FILE_SIZE));
+    smushImages.setDirectoryFilter(new DirectoryFilter());
     smushImages.smush();
   }
 
