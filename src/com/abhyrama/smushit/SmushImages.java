@@ -75,6 +75,11 @@ public class SmushImages {
   }
 
   public static void main(String[] args) throws IOException {
+    if (args.length == 0) {
+      printUsageInstructions();
+      System.exit(0);
+    }
+
     Map<String, String> options = processCommandLineArguments(args);
 
     Set<String> validFiles = new HashSet<String>();
@@ -83,7 +88,7 @@ public class SmushImages {
     validFiles.add("jpg");
     validFiles.add("jpeg");
 
-    SmushImages smushImages = new SmushImages(options.get("rootDir"), validFiles);
+    SmushImages smushImages = new SmushImages(options.get(ROOT_DIR_COMMAND_LINE_OPTION), validFiles);
     smushImages.smush();
   }
 
@@ -92,9 +97,11 @@ public class SmushImages {
     String value;
   }
 
+  public static final String ROOT_DIR_COMMAND_LINE_OPTION = "rootDir";
+
   public static Map<String, String> processCommandLineArguments(String[] args) {
     Set<String> acceptedCommandLineOptions = new HashSet<String>();
-    acceptedCommandLineOptions.add("rootDir");
+    acceptedCommandLineOptions.add(ROOT_DIR_COMMAND_LINE_OPTION);
 
     Map<String, String> options = new HashMap<String, String>(args.length);
 
@@ -106,6 +113,11 @@ public class SmushImages {
     }
 
     return options;
+  }
+
+  protected static void printUsageInstructions() {
+    String usage = "\nUsage: java -jar smushit.jar [options]";
+    System.out.println(usage);
   }
 
   protected static CommandOptionVo convertToCommandOptionVo(String arg) {
