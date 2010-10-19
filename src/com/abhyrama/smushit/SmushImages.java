@@ -17,6 +17,7 @@ import java.util.regex.Matcher;
 public class SmushImages {
   protected final String rootDirectory;
   protected final Set<String> acceptedFileExtensions;
+  protected boolean verbose;
 
   public SmushImages(String rootDirectory, Set<String> acceptedFileExtensions) {
     this.rootDirectory = rootDirectory;
@@ -26,15 +27,29 @@ public class SmushImages {
   protected final FileFilter myFileFilter = new MyFileFilter(this.acceptedFileExtensions, SmushIt.MAX_FILE_SIZE);
   protected final FileFilter directoryFilter = new DirectoryFilter();
 
+  public boolean isVerbose() {
+    return verbose;
+  }
+
+  public void setVerbose(boolean verbose) {
+    this.verbose = verbose;
+  }
+
   public void smush() throws IOException {
     this.smushHelper(new File(this.rootDirectory));
   }
 
   protected void smushHelper(File directory) throws IOException {
+    if (this.verbose) {
+      System.out.println("Smushing files in directory - " + directory.toString());
+    }
+
     File[] images = directory.listFiles(this.myFileFilter);
 
     if (images.length > 0) {
       SmushIt smushIt = new SmushIt();
+      smushIt.setVerbose(this.verbose);
+
       smushIt.addFiles(this.arrayToList(images));
       List<SmushItResultVo> smushItResultVos = smushIt.smush();
 
@@ -61,6 +76,8 @@ public class SmushImages {
 
   protected void replaceWithSmushedImages(File directory, List<SmushItResultVo> smushItResultVos) throws IOException {
     ImageDownloader imageDownloader = new ImageDownloader(directory.toString());
+
+    imageDownloader.setVerbose(this.verbose);
 
     //local copy is made because we do not want to tamper the original list
     List<SmushItResultVo> smushedImages = new LinkedList<SmushItResultVo>();
@@ -92,12 +109,15 @@ public class SmushImages {
       displayErrorAndExit("\nError:Please specify the directory containing the images to be smushed");
     }
 
+    boolean verbose = false;
     if (options.containsKey(VERBOSE_COMMAND_LINE_OPTION)) {
       String verboseOptionValue = options.get(VERBOSE_COMMAND_LINE_OPTION);
 
       if (!(VERBOSE_COMMAND_LINE_OPTION_TRUE.equals(verboseOptionValue) || VERBOSE_COMMAND_LINE_OPTION_FALSE.equals(verboseOptionValue))) {
         displayErrorAndExit("\nError:Verbose option value should be either true or false");
       }
+
+      verbose = Boolean.valueOf(verboseOptionValue);
     }
 
     String rootDirectory = options.get(IMAGE_DIR_COMMAND_LINE_OPTION);
@@ -117,6 +137,7 @@ public class SmushImages {
     }
 
     SmushImages smushImages = new SmushImages(options.get(IMAGE_DIR_COMMAND_LINE_OPTION), validFiles);
+    smushImages.setVerbose(verbose);
     smushImages.smush();
   }
 

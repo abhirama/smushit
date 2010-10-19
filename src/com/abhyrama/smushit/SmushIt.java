@@ -36,6 +36,16 @@ public class SmushIt {
 
   protected List<String> files = new LinkedList<String>();
 
+  protected boolean verbose;
+
+  public boolean isVerbose() {
+    return verbose;
+  }
+
+  public void setVerbose(boolean verbose) {
+    this.verbose = verbose;
+  }
+
   public void addFile(String file) {
     this.files.add(file);
   }
@@ -59,7 +69,6 @@ public class SmushIt {
     } else {
       subList = this.files.subList(startIndex, endIndex);
 
-
       while (subList.size() != 0) {
         smushItResultVos.addAll(this.smushHelper(subList));
         startIndex = endIndex;
@@ -76,7 +85,19 @@ public class SmushIt {
     return smushItResultVos;
   }
 
+  protected void printFileNames(List<String> files) {
+    for (String file : files) {
+      System.out.println(file);
+    }
+
+  }
+
   protected List<SmushItResultVo> smushHelper(List<String> files) throws IOException {
+    if (this.verbose) {
+      System.out.println("Smushing files:");
+      this.printFileNames(files);
+    }
+
     HttpClient httpClient = new DefaultHttpClient();
 
     HttpPost httpPost = new HttpPost(SMUSHIT_URL);
@@ -91,6 +112,16 @@ public class SmushIt {
     String responseBody = httpClient.execute(httpPost, responseHandler);
 
     List<SmushItResultVo> smushItResultVos = this.transformToResultVo(responseBody);
+
+    if (this.verbose) {
+      for (SmushItResultVo smushItResultVo : smushItResultVos) {
+        System.out.println("Source Image:" + smushItResultVo.getSourceImage()
+            + ", Source image size:" + smushItResultVo.getSourceImageSize()
+            + ", Smushed image size:" + smushItResultVo.getSmushedImageSize()
+            + ", Percentage saving:" + smushItResultVo.getSavingPercentage()
+        );
+      }
+    }
 
     httpClient.getConnectionManager().shutdown();
 
