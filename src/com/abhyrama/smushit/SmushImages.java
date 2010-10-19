@@ -74,6 +74,11 @@ public class SmushImages {
     imageDownloader.download(smushedImages);
   }
 
+  public static final String IMAGE_DIR_COMMAND_LINE_OPTION = "imageDir";
+  public static final String VERBOSE_COMMAND_LINE_OPTION = "verbose";
+  public static final String VERBOSE_COMMAND_LINE_OPTION_TRUE = "true";
+  public static final String VERBOSE_COMMAND_LINE_OPTION_FALSE = "flase";
+
   public static void main(String[] args) throws IOException {
     if (args.length == 0) {
       printUsageInstructions();
@@ -82,13 +87,36 @@ public class SmushImages {
 
     Map<String, String> options = processCommandLineArguments(args);
 
+    if (!(options.containsKey(IMAGE_DIR_COMMAND_LINE_OPTION))) {
+      System.out.println("\nError:Please specify the directory containing the images to be smushed");
+      printUsageInstructions();
+      System.exit(0);
+    }
+
+    if (options.containsKey(VERBOSE_COMMAND_LINE_OPTION)) {
+      String verboseOptionValue = options.get(VERBOSE_COMMAND_LINE_OPTION);
+
+      if (!(VERBOSE_COMMAND_LINE_OPTION_TRUE.equals(verboseOptionValue) || VERBOSE_COMMAND_LINE_OPTION_FALSE.equals(verboseOptionValue))) {
+        System.out.println("\nError:Verbose option value should be either true or false");
+        printUsageInstructions();
+        System.exit(0);
+      }
+    }
+
+    String rootDirectory = options.get(IMAGE_DIR_COMMAND_LINE_OPTION);
+    if (!(new File(rootDirectory).exists())) {
+      System.out.println("\nError:Specified directory does not exist");
+      printUsageInstructions();
+      System.exit(0);
+    }
+
     Set<String> validFiles = new HashSet<String>();
     validFiles.add("gif");
     validFiles.add("png");
     validFiles.add("jpg");
     validFiles.add("jpeg");
 
-    SmushImages smushImages = new SmushImages(options.get(ROOT_DIR_COMMAND_LINE_OPTION), validFiles);
+    SmushImages smushImages = new SmushImages(options.get(IMAGE_DIR_COMMAND_LINE_OPTION), validFiles);
     smushImages.smush();
   }
 
@@ -97,11 +125,10 @@ public class SmushImages {
     String value;
   }
 
-  public static final String ROOT_DIR_COMMAND_LINE_OPTION = "rootDir";
-
   public static Map<String, String> processCommandLineArguments(String[] args) {
     Set<String> acceptedCommandLineOptions = new HashSet<String>();
-    acceptedCommandLineOptions.add(ROOT_DIR_COMMAND_LINE_OPTION);
+    acceptedCommandLineOptions.add(IMAGE_DIR_COMMAND_LINE_OPTION);
+    acceptedCommandLineOptions.add(VERBOSE_COMMAND_LINE_OPTION);
 
     Map<String, String> options = new HashMap<String, String>(args.length);
 
@@ -116,7 +143,15 @@ public class SmushImages {
   }
 
   protected static void printUsageInstructions() {
-    String usage = "\nUsage: java -jar smushit.jar [options]";
+    String usage = "\nUsage: java -jar smushit.jar [options]" +
+        "\n\n" +
+        "Compulsory Option" +
+        "\n" +
+        " -imageDir                      Directory of the images to be smushed" +
+        "\n\n" +
+        "Optional Option" +
+        "\n" +
+        " -verbose <true|false>          Display informational messages";
     System.out.println(usage);
   }
 
