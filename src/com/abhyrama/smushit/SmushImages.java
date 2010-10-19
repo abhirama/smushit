@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class SmushImages {
   protected final String rootDirectory;
@@ -68,18 +70,57 @@ public class SmushImages {
         smushedImages.add(smushItResultVo);
       }
     }
-    
+
     imageDownloader.download(smushedImages);
   }
 
   public static void main(String[] args) throws IOException {
+    Map<String, String> options = processCommandLineArguments(args);
+
     Set<String> validFiles = new HashSet<String>();
     validFiles.add("gif");
     validFiles.add("png");
     validFiles.add("jpg");
     validFiles.add("jpeg");
 
-    SmushImages smushImages = new SmushImages("D:\\icons", validFiles);
+    SmushImages smushImages = new SmushImages(options.get("rootDir"), validFiles);
     smushImages.smush();
+  }
+
+  private static class CommandOptionVo {
+    String option;
+    String value;
+  }
+
+  public static Map<String, String> processCommandLineArguments(String[] args) {
+    Set<String> acceptedCommandLineOptions = new HashSet<String>();
+    acceptedCommandLineOptions.add("rootDir");
+
+    Map<String, String> options = new HashMap<String, String>(args.length);
+
+    for (String arg : args) {
+      CommandOptionVo commandOptionVo = convertToCommandOptionVo(arg);
+      if (acceptedCommandLineOptions.contains(commandOptionVo.option)) {
+        options.put(commandOptionVo.option, commandOptionVo.value);
+      }
+    }
+
+    return options;
+  }
+
+  protected static CommandOptionVo convertToCommandOptionVo(String arg) {
+    String stringPattern = "^-(.*?)=(.*?)$"; //corresponds to a pattern of the format -rootDirectory=C://foo
+
+    Pattern pattern = Pattern.compile(stringPattern);
+    Matcher matcher = pattern.matcher(arg);
+
+    CommandOptionVo commandOptionVo = null;
+    if (matcher.find()) {
+      commandOptionVo = new CommandOptionVo();
+      commandOptionVo.option = matcher.group(1);
+      commandOptionVo.value = matcher.group(2);
+    }
+
+    return commandOptionVo;
   }
 }
