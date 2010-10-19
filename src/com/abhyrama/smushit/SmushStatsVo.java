@@ -29,7 +29,7 @@ public class SmushStatsVo {
     this.smushedImagesCount = smushedImagesCount;
   }
 
-  public float getTotalUploadedImagesSize() {
+  public int getTotalUploadedImagesSize() {
     return totalUploadedImagesSize;
   }
 
@@ -37,12 +37,17 @@ public class SmushStatsVo {
     this.totalUploadedImagesSize = totalUploadedImagesSize;
   }
 
-  public float getTotalSmushedImagesSize() {
+  public int getTotalSmushedImagesSize() {
     return totalSmushedImagesSize;
   }
 
   public void setTotalSmushedImagesSize(int totalSmushedImagesSize) {
     this.totalSmushedImagesSize = totalSmushedImagesSize;
+  }
+
+  public float calculatePercentageSaving() {
+    int difference = this.totalUploadedImagesSize - this.totalSmushedImagesSize;
+    return ((float)(100 * difference)) / this.totalSmushedImagesSize;
   }
 
   public String toString() {
