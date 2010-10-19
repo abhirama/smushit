@@ -4,6 +4,7 @@
   <property name="lib.dir" value="lib"/>
   <property name="build.dir" value="build"/>
   <property name="java-src.dir" value="src"/>
+  <property name="jar.name" value="smushit.jar"/>
 
   <target name="clean" description="Clean output directories">
     <delete dir="${build.dir}" />
@@ -26,7 +27,7 @@
   </target>
 
   <target name="createJar" depends="compile" description="Create the application jar file">
-    <jar destfile="smushit.jar">
+    <jar destfile="${jar.name}">
       <zipfileset dir="${build.dir}/classes" prefix=""/>
       <zipfileset src="${lib.dir}/apache-mime4j-0.6.jar"/>
       <zipfileset src="${lib.dir}/commons-codec-1.3.jar"/>
