@@ -3,8 +3,8 @@
  * http://bitbucket.org/abhirama/smushit
  *
  * Copyright 2010, Abhirama
- * Licensed under the MIT license.
  * http://abhirama.wordpress.com/
+ * You can use this software the way you want as long as you keep this notice.
  */
 package com.abhyrama.smushit;
 

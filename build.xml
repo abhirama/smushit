@@ -1,3 +1,13 @@
+<!--
+/*
+ * A command line interface to yahoo!'s smush.it lossless image compression utility - http://www.smushit.com/ysmush.it/
+ * http://bitbucket.org/abhirama/smushit
+ *
+ * Copyright 2010, Abhirama
+ * http://abhirama.wordpress.com/
+ * You can use this software the way you want as long as you keep this notice.
+ */
+-->
 <?xml version="1.0"?>
 
 <project name="smushit" basedir="." default="createJar">
