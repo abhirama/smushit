@@ -246,7 +246,7 @@ public class SmushImages {
   protected static void printUsageInstructions() {
     String usage = "\nUsage: java -jar smushit.jar [options]" +
         "\n\n" +
-        "Compulsory Option" +
+        "Mandatory Option" +
         "\n" +
         " -imageDir                       Directory of the images to be smushed" +
         "\n\n" +
