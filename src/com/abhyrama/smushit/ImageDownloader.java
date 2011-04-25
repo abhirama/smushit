@@ -8,9 +8,9 @@
  */
 package com.abhyrama.smushit;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -36,21 +36,28 @@ public class ImageDownloader {
     String stringUrl = smushItResultVo.getSmushedImageUrl();
 
     URL url = new URL(stringUrl);
-    BufferedImage image = ImageIO.read(url);
+
+    BufferedInputStream bufferedInputStream = new BufferedInputStream(url.openStream());
 
     if (this.verbose) {
       System.out.println("Downloaded smushed image - " + stringUrl);
     }
 
-    String imageExtension = Utils.getExtension(stringUrl);
     String imageName = Utils.getImageNameFromUrl(stringUrl);
-
     String savedImage = this.downloadDirectory + File.separator + imageName;
     File outfile = new File(savedImage);
-    //here we are assuming there is an image writer for the corresponding image extenion/type. Do not know how it will
-    //behave if passed an image type for which there is no writer. todo check this
-    //overwrites an image if it already exists
-    ImageIO.write(image, imageExtension, outfile);
+    FileOutputStream fileOutputStream = new FileOutputStream(savedImage);
+
+    try {
+      int byteRead = -1;
+
+      while ((byteRead = bufferedInputStream.read()) != -1) {
+        fileOutputStream.write(byteRead);
+      }
+    } finally {
+      fileOutputStream.flush();
+      fileOutputStream.close();
+    }
 
     if (this.verbose) {
       System.out.println("Saved image - " + savedImage);
