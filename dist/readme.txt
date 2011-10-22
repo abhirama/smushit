@@ -16,7 +16,7 @@ Will not download the smushed images.
 Specify a list of comma separated image extensions. Only images with those extensions will be smushed.
 
 Example usage:
-java -jar smushit.jar -imageDir=/foo -verbose=true dryRun=false -imgExtensions=gif,png,jpeg
+java -jar smushit.jar -imageDir=/foo -verbose=true -dryRun=false -imgExtensions=gif,png,jpeg
 
 The above will smush all the images with extension gif,png,jpeg in directory foo and it's sub directories and will download the smushed images and replace original with the smushed images.
 
