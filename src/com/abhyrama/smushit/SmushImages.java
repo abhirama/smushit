@@ -256,7 +256,7 @@ public class SmushImages {
         " -dryRun <true|false>            Whether smushed images should be downloaded or not\n" +
         " -imgExtensions                  Comma separated image extension. If none provided assumes png, gif, jpg/jpeg" +
         "\n\nExample usage: " +
-        "\njava -jar smushit.jar -imageDir=/foo -verbose=true dryRun=false -imgExtensions=gif,png,jpeg";
+        "\njava -jar smushit.jar -imageDir=/foo -verbose=true -dryRun=false -imgExtensions=gif,png,jpeg";
 
     System.out.println(usage);
   }
