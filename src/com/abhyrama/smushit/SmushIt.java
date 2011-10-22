@@ -90,7 +90,6 @@ public class SmushIt {
     for (String file : files) {
       System.out.println(file);
     }
-
   }
 
   protected List<SmushItResultVo> smushHelper(List<String> files) throws IOException {
@@ -130,6 +129,7 @@ public class SmushIt {
   }
 
   protected List<SmushItResultVo> transformToResultVo(String jsonResponse) {
+    System.out.println(jsonResponse);
     List<SmushItResultVo> smushItResultVos = new LinkedList<SmushItResultVo>();
 
     if (this.isResponseArray(jsonResponse)) {
@@ -151,6 +151,7 @@ public class SmushIt {
 
   protected void addFilesToRequest(MultipartEntity multipartEntity, List<String> files) {
     for (String file : files) {
+      System.out.println("Adding file:" + file);
       multipartEntity.addPart(FILE_PARAM_NAME, new FileBody(new File(file)));
     }
   }

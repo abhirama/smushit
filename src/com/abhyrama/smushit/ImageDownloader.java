@@ -44,6 +44,11 @@ public class ImageDownloader {
     }
 
     String imageName = Utils.getImageNameFromUrl(stringUrl);
+
+    //for some reason, the response json has image names in the following
+    //form - http:\/\/ysmushit.zenfs.com\/results\/5d4d714f%2Fsmush%2FdogTag.png
+    imageName = Utils.replaceJunkCharacterInUrlImageName(imageName);
+
     String savedImage = this.downloadDirectory + File.separator + imageName;
     File outfile = new File(savedImage);
     FileOutputStream fileOutputStream = new FileOutputStream(savedImage);

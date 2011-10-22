@@ -65,7 +65,9 @@ public class SmushItResultVo {
 
   public static SmushItResultVo create(Map map) {
     SmushItResultVo smushItResultVo = new SmushItResultVo();
-    smushItResultVo.setSourceImage((String.valueOf(map.get(JSON_RESPONSE_PARAM_SRC))));
+    //Image names in the response json are being appended with some strings, do not know why this is happening, like this
+    // - b224eabc%2FGhostBustersCostume.png
+    smushItResultVo.setSourceImage(Utils.replaceJunkCharacterInImageNames(String.valueOf(map.get(JSON_RESPONSE_PARAM_SRC))));
     smushItResultVo.setSourceImageSize((String.valueOf(map.get(JSON_RESPONSE_PARAM_SRC_SIZE))));
 
     String smushedImageUrl = String.valueOf(map.get(JSON_RESPONSE_PARAM_DEST));
