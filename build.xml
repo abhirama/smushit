@@ -1,45 +1,54 @@
 <?xml version="1.0"?>
 
 <project name="smushit" basedir="." default="createJar">
-  <property name="lib.dir" value="lib"/>
-  <property name="build.dir" value="build"/>
-  <property name="java-src.dir" value="src"/>
-  <property name="jar.name" value="smushit.jar"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="build.dir" value="build"/>
+    <property name="java-src.dir" value="src"/>
+    <property name="jar.name" value="smushit.jar"/>
+    <property name="version" value="0.3"/>
 
-  <target name="clean" description="Clean output directories">
-    <delete dir="${build.dir}" />
-  </target>
+    <target name="clean" description="Clean output directories">
+        <delete dir="${build.dir}" />
+    </target>
 
-  <path id="classpath">
-    <fileset dir="${lib.dir}" includes="*.jar"/>
-    <pathelement path="${build.dir}"/>
-  </path>
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="*.jar"/>
+        <pathelement path="${build.dir}"/>
+    </path>
 
-  <target name="compile" description="Compile main source tree java files">
+    <target name="compile" description="Compile main source tree java files">
 
-    <mkdir dir="${build.dir}/classes"/>
+        <mkdir dir="${build.dir}/classes"/>
 
-    <javac destdir="${build.dir}/classes" nowarn="true" encoding="iso-8859-1" debug="true" optimize="false"
-           deprecation="false" failonerror="true" target="1.6" source="1.6">
-      <src path="${java-src.dir}"/>
-      <classpath refid="classpath"/>
-    </javac>
-  </target>
+        <javac destdir="${build.dir}/classes" nowarn="true" encoding="iso-8859-1" debug="true" optimize="false"
+               deprecation="false" failonerror="true" target="1.6" source="1.6">
+            <src path="${java-src.dir}"/>
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
 
-  <target name="createJar" depends="compile" description="Create the application jar file">
-    <jar destfile="${jar.name}">
-      <zipfileset dir="${build.dir}/classes" prefix=""/>
-      <zipfileset src="${lib.dir}/apache-mime4j-0.6.jar"/>
-      <zipfileset src="${lib.dir}/commons-codec-1.3.jar"/>
-      <zipfileset src="${lib.dir}/commons-logging-1.1.1.jar"/>
-      <zipfileset src="${lib.dir}/flexjson-2.0.jar"/>
-      <zipfileset src="${lib.dir}/httpclient-4.0.3.jar"/>
-      <zipfileset src="${lib.dir}/httpcore-4.0.1.jar"/>
-      <zipfileset src="${lib.dir}/httpmime-4.0.3.jar"/>
-      <manifest>
-        <attribute name="Main-Class" value="com.abhyrama.smushit.SmushImages"/>
-      </manifest>
-    </jar>
-  </target>
+    <target name="createJar" depends="compile" description="Create the application jar file">
+        <jar destfile="${jar.name}">
+            <zipfileset dir="${build.dir}/classes" prefix=""/>
+            <zipfileset src="${lib.dir}/apache-mime4j-0.6.jar"/>
+            <zipfileset src="${lib.dir}/commons-codec-1.3.jar"/>
+            <zipfileset src="${lib.dir}/commons-logging-1.1.1.jar"/>
+            <zipfileset src="${lib.dir}/flexjson-2.0.jar"/>
+            <zipfileset src="${lib.dir}/httpclient-4.0.3.jar"/>
+            <zipfileset src="${lib.dir}/httpcore-4.0.1.jar"/>
+            <zipfileset src="${lib.dir}/httpmime-4.0.3.jar"/>
+            <manifest>
+                <attribute name="Main-Class" value="com.abhyrama.smushit.SmushImages"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="moveJar" description="Moves the jar file from the home folder to the dist folder">
+        <copy file="${jar.name}" todir="dist"/>
+    </target>
+
+    <target name="createZip" description="Creates the package zip file">
+        <zip destfile="dist/smushit-${version}.zip" basedir="dist" includes="*.jar, *.txt"/>
+    </target>
 
 </project>
