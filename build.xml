@@ -48,7 +48,7 @@
     </target>
 
     <target name="createZip" description="Creates the package zip file">
-        <zip destfile="dist/smushit-${version}.zip" basedir="dist" includes="*.jar, *.txt"/>
+        <zip destfile="dist/smushit-v${version}.zip" basedir="dist" includes="*.jar, *.txt"/>
     </target>
 
 </project>
