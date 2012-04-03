@@ -48,7 +48,7 @@ public class SmushStatsVo {
 
   public float calculatePercentageSaving() {
     int difference = this.totalUploadedImagesSize - this.totalSmushedImagesSize;
-    return ((float)(100 * difference)) / this.totalSmushedImagesSize;
+    return ((float)(100 * difference)) / this.totalUploadedImagesSize;
   }
 
   public String toString() {
