@@ -23,5 +23,3 @@ The above will smush all the images with extension gif,png,jpeg in directory foo
 Important:
 ----------
 Sometimes smushit converts gifs to pngs if the resulting png files are smaller. Take a look at this faq - http://developer.yahoo.com/yslow/smushit/faq.html#faq_giftopng . If this happens with your images, your image folder will have the original image as well as the newly converted png image.
-
-
